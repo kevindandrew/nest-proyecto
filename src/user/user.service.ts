@@ -13,18 +13,45 @@ export class UserService {
   findAll() {
     return this.prisma.user.findMany({
       orderBy: { id: 'asc' },
+      where: { activo: true },
+      omit: { password: true, activo: true },
     });
   }
 
   findOne(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      omit: { password: true, activo: true },
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(
+    id: number,
+    data: {
+      email?: string;
+      name?: string;
+      password?: string;
+      activo?: boolean;
+    },
+  ) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+      omit: { password: true },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.prisma.user.update({
+      where: { id },
+      data: { activo: false },
+      omit: { password: true },
+    });
+  }
+
+  deleteGozu(id: number) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

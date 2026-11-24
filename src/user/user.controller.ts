@@ -39,4 +39,8 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+  @Delete('/hard/:id')
+  hardRemove(@Param('id') id: string) {
+    return this.userService.deleteGozu(+id);
+  }
 }
