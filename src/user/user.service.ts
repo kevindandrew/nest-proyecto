@@ -1,12 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { NotFoundException } from '@nestjs/common';
+import { Update } from 'vite';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-  create(data: { email: string; name: string; password: string }) {
+  async create(data: CreateUserDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (user) {
+      throw new BadRequestException('Este correo ya existe en otro usuario');
+    }
     return this.prisma.user.create({ data });
   }
 
@@ -25,15 +33,7 @@ export class UserService {
     });
   }
 
-  update(
-    id: number,
-    data: {
-      email?: string;
-      name?: string;
-      password?: string;
-      activo?: boolean;
-    },
-  ) {
+  update(id: number, data: UpdateUserDto) {
     return this.prisma.user.update({
       where: { id },
       data,

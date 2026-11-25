@@ -6,7 +6,8 @@ import { NotFoundError } from 'rxjs';
 @Injectable()
 export class PostService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: { title: string; content: string; authorId: number }) {
+
+  async create(data: CreatePostDto) {
     const autor = await this.prisma.user.findUnique({
       where: { id: data.authorId },
     });
@@ -40,7 +41,7 @@ export class PostService {
     });
   }
 
-  update(id: number, data: { title?: string; content?: string }) {
+  update(id: number, data: UpdatePostDto) {
     return this.prisma.post.update({
       where: { id },
       data,

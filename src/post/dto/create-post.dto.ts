@@ -1,5 +1,26 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 export class CreatePostDto {
-  title: string;
-  content: string;
-  authorId: number;
+  @ApiProperty({ example: 'MI primer post de nestjs' })
+  @IsString()
+  @IsNotEmpty()
+  title!: string;
+  @ApiPropertyOptional({
+    example: 'Contenido opcional del post',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  content?: string;
+
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  @IsPositive()
+  authorId!: number;
 }
