@@ -7,13 +7,7 @@ import { NotFoundError } from 'rxjs';
 export class PostService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreatePostDto) {
-    const autor = await this.prisma.user.findUnique({
-      where: { id: data.authorId },
-    });
-    if (!autor) {
-      throw new NotFoundException('el autor no existe');
-    }
+  create(data: CreatePostDto) {
     return this.prisma.post.create({
       data,
     });
@@ -25,8 +19,8 @@ export class PostService {
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.post.findUnique({
+  async findOne(id: number) {
+    const post = await this.prisma.post.findUnique({
       where: { id },
       include: {
         author: {
@@ -39,6 +33,10 @@ export class PostService {
         },
       },
     });
+    if (!post) {
+      throw new NotFoundException('el post con este id no existe');
+    }
+    return post;
   }
 
   update(id: number, data: UpdatePostDto) {

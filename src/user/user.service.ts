@@ -8,13 +8,8 @@ import { Update } from 'vite';
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: CreateUserDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
-    if (user) {
-      throw new BadRequestException('Este correo ya existe en otro usuario');
-    }
+
+  create(data: CreateUserDto) {
     return this.prisma.user.create({ data });
   }
 
@@ -26,7 +21,11 @@ export class UserService {
     });
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('el usuario con este id no existe');
+    }
     return this.prisma.user.findUnique({
       where: { id },
       omit: { password: true, activo: true },
