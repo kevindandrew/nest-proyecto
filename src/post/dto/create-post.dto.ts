@@ -18,9 +18,4 @@ export class CreatePostDto {
   @IsOptional()
   @IsString()
   content?: string;
-
-  @ApiProperty({ example: 1 })
-  @IsInt()
-  @IsPositive()
-  authorId!: number;
 }

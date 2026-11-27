@@ -7,9 +7,9 @@ import { NotFoundError } from 'rxjs';
 export class PostService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreatePostDto) {
+  create(data: CreatePostDto, authorId: number) {
     return this.prisma.post.create({
-      data,
+      data: { ...data, authorId },
     });
   }
 

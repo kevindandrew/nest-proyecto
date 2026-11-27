@@ -1,16 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { NotFoundException } from '@nestjs/common';
-import { Update } from 'vite';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreateUserDto) {
-    return this.prisma.user.create({ data });
+  async create(data: CreateUserDto) {
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    return this.prisma.user.create({
+      data: { ...data, password: passwordHash },
+      select: { id: true, email: true, role: true, name: true },
+    });
   }
 
   findAll() {
